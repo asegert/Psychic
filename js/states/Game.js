@@ -55,6 +55,24 @@ Psychic.GameState = {
                 this.crystalBall[i].events.onInputDown.add(function()
                 {
                     console.log('You got the right ball');
+                    
+                    let tiltTween = this.add.tween(this.crystalBall[i]).to({rotation: -0.5}, 1000, "Linear", true);
+                    tiltTween.onComplete.add(function()
+                    {
+                        this.world.bringToTop(this.card);
+                        this.add.tween(this.card.scale).to({x: 1, y: 1}, 1000, "Linear", true);
+                        this.add.tween(this.card).to({x: this.card.x, y: 150}, 1000, "Linear", true);
+                        let rotateBack = this.add.tween(this.crystalBall[i]).to({rotation: 0}, 1000, "Linear", true);
+                        rotateBack.onComplete.add(function()
+                        {
+                            let firstFlip = this.add.tween(this.card.scale).to({x: -0}, 1000, "Linear", true); 
+                            firstFlip.onComplete.add(function()
+                            {
+                                this.card.loadTexture('card');
+                                this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
+                            }, this);
+                        }, this);
+                    }, this);
                 }, this);
             }
             else
@@ -96,8 +114,9 @@ Psychic.GameState = {
     },
     replaceCard: function(index)
     {
-        this.card = this.add.sprite(this.crystalBall[index].x + 70, 520, 'cardBack');
+        this.card = this.add.sprite(this.crystalBall[index].x + 100, 520, 'cardBack');
         this.card.scale.setTo(0.5, 0.1);
+        this.card.anchor.setTo(0.5, 0.5);
         this.world.bringToTop(this.crystalBall[index]);    
     },
     update: function ()
