@@ -3,7 +3,10 @@ var Psychic = Psychic || {};
 Psychic.GameState = {
     create: function ()
     {
-        this.add.sprite(0, 0, 'background');//temp
+        this.add.sprite(0, 0, 'background');
+        this.levels = 3;
+        this.currentLevel = 1;
+        //temp
         //this.add.text(0, 0, "Find the card and I will show you your future");
         //Holds the three crystal balls
         this.crystalBall = new Array();
@@ -141,7 +144,25 @@ Psychic.GameState = {
                     let lastTween = this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
                     lastTween.onComplete.add(function()
                     {
-                        this.state.start('End');
+                        if(this.currentLevel < this.levels)
+                        {
+                            this.currentLevel++;
+                            
+                            this.card.destroy();
+                            this.crystalBall[0].destroy();
+                            this.crystalBall[1].destroy();
+                            this.crystalBall[2].destroy();
+                            
+                            this.crystalBall[0] = this.add.sprite(0, 365, 'crystalBall');
+                            this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
+                            this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
+                            
+                            this.showCard();
+                        }
+                        else
+                        {
+                            this.state.start('End');
+                        }
                     }, this);
                 }, this);
             }, this);
