@@ -3,13 +3,13 @@ var Psychic = Psychic || {};
 Psychic.GameState = {
     create: function ()
     {
-        //temp
+        this.add.sprite(0, 0, 'background');//temp
         //this.add.text(0, 0, "Find the card and I will show you your future");
         //Holds the three crystal balls
         this.crystalBall = new Array();
-        this.crystalBall[0]= this.add.sprite(0, 300, 'crystalBall');
-        this.crystalBall[1] = this.add.sprite(350, 300, 'crystalBall');
-        this.crystalBall[2] = this.add.sprite(700, 300, 'crystalBall');
+        this.crystalBall[0]= this.add.sprite(0, 365, 'crystalBall');
+        this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
+        this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
         //Start the game
         this.showCard();
     },
@@ -18,7 +18,7 @@ Psychic.GameState = {
         //Random number to point to the ball in which the card will be placed under
         let num = Math.floor(Math.random() * 3);
         //Create the card           
-        this.card = this.add.sprite((num * 350) + 130, 150, 'card');
+        this.card = this.add.sprite((num * 350) + 130, 205, 'card');
         this.card.anchor.setTo(0.5, 0.5);
         //Animation
         //Tilt the crystal ball so the card can be placed under it
@@ -35,7 +35,7 @@ Psychic.GameState = {
             {
                 //Scale the card down and place under the crystal ball
                 this.add.tween(this.card.scale).to({x: 0.5, y: 0.1}, 1000, "Linear", true);
-                let lastCardTween = this.add.tween(this.card).to({x: this.card.x - 20, y: 540}, 1000, "Linear", true);
+                let lastCardTween = this.add.tween(this.card).to({x: this.card.x - 20, y: 605}, 1000, "Linear", true);
                 lastCardTween.onComplete.add(function()
                 {
                     //Place the crystal ball over the card
@@ -106,7 +106,7 @@ Psychic.GameState = {
     },
     replaceCard: function(index)
     {
-        this.card = this.add.sprite(this.crystalBall[index].x + 100, 520, 'cardBack');
+        this.card = this.add.sprite(this.crystalBall[index].x + 100, 585, 'cardBack');
         this.card.scale.setTo(0.5, 0.1);
         this.card.anchor.setTo(0.5, 0.5);
         this.world.bringToTop(this.crystalBall[index]);    
@@ -125,7 +125,7 @@ Psychic.GameState = {
         {
             this.world.bringToTop(this.card);
             this.add.tween(this.card.scale).to({x: 1, y: 1}, 1000, "Linear", true);
-            this.add.tween(this.card).to({x: this.card.x, y: 150}, 1000, "Linear", true);
+            this.add.tween(this.card).to({x: this.card.x, y: 205}, 1000, "Linear", true);
             let rotateBack = this.add.tween(this.crystalBall[index]).to({rotation: 0}, 1000, "Linear", true);
             if(!found)
             {
@@ -138,7 +138,11 @@ Psychic.GameState = {
                 firstFlip.onComplete.add(function()
                 {
                     this.card.loadTexture('card');
-                    this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
+                    let lastTween = this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
+                    lastTween.onComplete.add(function()
+                    {
+                        this.state.start('End');
+                    }, this);
                 }, this);
             }, this);
         }, this);

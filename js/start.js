@@ -19,6 +19,7 @@ if(Phaser.Device.ie) //Checks that internet explorer is being used
         Psychic.game.state.add('Preload', Psychic.PreloadState); 
         Psychic.game.state.add('Game', Psychic.GameState);
         Psychic.game.state.add('Story', Psychic.StoryState);
+        Psychic.game.state.add('End', Psychic.EndState);
 
         Psychic.game.state.start('Cache'); 
     }
@@ -32,6 +33,7 @@ else
     Psychic.game.state.add('Preload', Psychic.PreloadState); 
     Psychic.game.state.add('Game', Psychic.GameState);
     Psychic.game.state.add('Story', Psychic.StoryState);
+    Psychic.game.state.add('End', Psychic.EndState);
 
     Psychic.game.state.start('Cache');
 }

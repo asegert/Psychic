@@ -7,9 +7,13 @@ Psychic.PreloadState = {
         var preloadProgress = this.add.sprite((this.world.width - 540) * 0.5, (this.world.height + 170) * 0.5, 'loading-progress');
         this.load.setPreloadSprite(preloadProgress);
 
+        this.load.image('background', 'assets/images/background.png');
         this.load.image('crystalBall', 'assets/images/crystalball.png');
-        this.load.image('card', 'assets/images/cardHeartsA.png');
+        this.load.image('crystalBallFinal', 'assets/images/crystalballReveal.png');
+        this.load.image('card', 'assets/images/cardJoker.png');
         this.load.image('cardBack', 'assets/images/cardBack_red5.png');
+        
+        this.load.image('coupon', 'assets/images/Psychic_coupon.jpg');
     },
     create: function ()
     {
