@@ -6,6 +6,7 @@ Psychic.GameState = {
         this.add.sprite(0, 0, 'background');
         this.levels = 3;
         this.currentLevel = 1;
+        this.wins = 0;
         //temp
         //this.add.text(0, 0, "Find the card and I will show you your future");
         //Holds the three crystal balls
@@ -58,22 +59,27 @@ Psychic.GameState = {
     },
     clickable: function(index)
     {
+        //Makes all the crystal balls clickable
         for(let i = 0, len = this.crystalBall.length; i<len; i++)
         {
+            //If it is the right one 
             if(i == index)
             {
                 this.crystalBall[i].inputEnabled = true;
                 this.crystalBall[i].events.onInputDown.add(function()
                 {
+                    //Run the tween
                     console.log('You got the right ball');
                     this.guessTween(true, i);
                 }, this);   
             }
+            //If it is wrong
             else
             {
                 this.crystalBall[i].inputEnabled = true;
                 this.crystalBall[i].events.onInputDown.add(function()
                 {
+                    //Run the tween
                     console.log('You got the wrong ball');
                     this.guessTween(false, 0);
                 }, this);
@@ -82,33 +88,29 @@ Psychic.GameState = {
     },
     shuffle: function(index, max, speed, num)
     {
+        //Get a random index to be moved and a random index of where to move to
         let rand = Math.floor(Math.random() * 3);
         let rand2 = Math.floor(Math.random() * 3);
-
+        //Make sure the indices are different
         while(rand2 === rand)
         {
             rand2 = Math.floor(Math.random() * 3);
         }
-            
+        //Temporarily store the old index  
         let oldx = this.crystalBall[rand].x;
-            
+        //Swap the crystal balls 
         this.add.tween(this.crystalBall[rand]).to({x: this.crystalBall[rand2].x}, speed, "Linear", true);
         let switchTween = this.add.tween(this.crystalBall[rand2]).to({x: oldx}, speed, "Linear", true);
         switchTween.onComplete.add(function()
         {
-            if(index<max)
-            {
-                this.shuffle((index + 1), max, speed, num);
-            }
-            else
-            {
-                this.replaceCard(num);
-            }
+            //If more shuffles should occur recall the function, otherwise place the card back under the correct crystal ball
+            (index<max) ? this.shuffle((index + 1), max, speed, num):this.replaceCard(num);
         }, this);
         
     },
     replaceCard: function(index)
     {
+        //Add the card under the correct crystal ball as it was before
         this.card = this.add.sprite(this.crystalBall[index].x + 100, 585, 'cardBack');
         this.card.scale.setTo(0.5, 0.1);
         this.card.anchor.setTo(0.5, 0.5);
@@ -116,16 +118,23 @@ Psychic.GameState = {
     },
     guessTween: function(found, index)
     {
+        //Tilt the crystal ball to reveal the card
         let tiltTween = this.add.tween(this.crystalBall[index]).to({rotation: -0.5}, 1000, "Linear", true);
         
+        //If the card was not found have the other two reveal as well, otherwise increase the wins
         if(!found)
         {
             this.add.tween(this.crystalBall[1]).to({rotation: -0.5}, 1000, "Linear", true);
             this.add.tween(this.crystalBall[2]).to({rotation: -0.5}, 1000, "Linear", true);
         }
+        else
+        {
+            this.wins++;
+        }
         
         tiltTween.onComplete.add(function()
         {
+            //Bring the card back up to the top at the right size
             this.world.bringToTop(this.card);
             this.add.tween(this.card.scale).to({x: 1, y: 1}, 1000, "Linear", true);
             this.add.tween(this.card).to({x: this.card.x, y: 205}, 1000, "Linear", true);
@@ -167,10 +176,6 @@ Psychic.GameState = {
                 }, this);
             }, this);
         }, this);
-    },
-    update: function ()
-    {
-        
     }
 };
 /*Copyright (C) Wayside Co. - All Rights Reserved
