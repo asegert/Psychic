@@ -1,0 +1,9 @@
+{
+    "Levels": 3,
+    "ShuffleSpeed": [1000, 650, 300],
+    "CardOffset": 130,
+    "CrystalBalls": {
+        "x": [75, 375, 675],
+        "y": [365, 365, 365]
+    }
+}

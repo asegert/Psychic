@@ -21,6 +21,22 @@ Psychic.PreloadState = {
         
         this.load.image('start', 'assets/images/start.png');
         this.load.image('coupon', 'assets/images/Psychic_coupon.jpg');
+        
+        this.load.text('psychicData', 'assets/data/psychicData.json');
+        
+        /*JSON
+        Holds...
+        Levels -> number of levels to be played
+        ShuffleSpeed -> An array holding the numerical values of the speed at which the crystal balls should be shuffled. 
+                        Each entry corresponds to a level.
+                        Recommended between 300-1000.
+                        Speed must be evenly divided
+        CardOffset -> number to offset the card
+        CrystalBalls -> Holds...
+                        x -> An array holding the x values for each of the three crystal balls
+                        y -> An array holding the y values for each of the three crystal balls
+        Due to the sheer number of tweens used they have not been generalized, but potentially could be.
+        */
     },
     create: function ()
     {

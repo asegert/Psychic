@@ -3,15 +3,16 @@ var Psychic = Psychic || {};
 Psychic.GameState = {
     create: function ()
     {
+        this.data = JSON.parse(this.game.cache.getText('psychicData'));
         this.add.sprite(0, 0, 'background');
-        this.levels = 3;
+        this.levels = this.data.Levels;
         this.currentLevel = 1;
         this.wins = 0;
         //Holds the three crystal balls
         this.crystalBall = new Array();
-        this.crystalBall[0]= this.add.sprite(0, 365, 'crystalBall');
-        this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
-        this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
+        this.crystalBall[0]= this.add.sprite(this.data.CrystalBalls.x[0], this.data.CrystalBalls.y[0], 'crystalBall');
+        this.crystalBall[1] = this.add.sprite(this.data.CrystalBalls.x[1], this.data.CrystalBalls.y[1], 'crystalBall');
+        this.crystalBall[2] = this.add.sprite(this.data.CrystalBalls.x[2], this.data.CrystalBalls.y[2], 'crystalBall');
         //Start the game
         this.showCard();
     },
@@ -20,7 +21,7 @@ Psychic.GameState = {
         //Random number to point to the ball in which the card will be placed under
         let num = Math.floor(Math.random() * 3);
         //Create the card           
-        this.card = this.add.sprite((num * 350) + 130, 205, 'card');
+        this.card = this.add.sprite((num * (this.data.CrystalBalls.x[1] - this.data.CrystalBalls.x[0])) + (this.data.CardOffset + this.data.CrystalBalls.x[0]), 205, 'card');
         this.card.anchor.setTo(0.5, 0.5);
         //Animation
         //Tilt the crystal ball so the card can be placed under it
@@ -48,7 +49,7 @@ Psychic.GameState = {
                     {
                         //Remove the card and begin mixing
                         this.card.destroy();
-                        this.shuffle(0, 10, 1000, num);//min 300
+                        this.shuffle(0, 10, this.data.ShuffleSpeed[this.currentLevel-1], num);
                     }, this);
                 }, this);
             }, this);
@@ -66,7 +67,6 @@ Psychic.GameState = {
                 this.crystalBall[i].events.onInputDown.add(function()
                 {
                     //Run the tween
-                    console.log('You got the right ball');
                     this.crystalBall[0].inputEnabled = false;
                     this.crystalBall[1].inputEnabled = false;
                     this.crystalBall[2].inputEnabled = false;
@@ -80,7 +80,6 @@ Psychic.GameState = {
                 this.crystalBall[i].events.onInputDown.add(function()
                 {
                     //Run the tween
-                    console.log('You got the wrong ball');
                     this.crystalBall[0].inputEnabled = false;
                     this.crystalBall[1].inputEnabled = false;
                     this.crystalBall[2].inputEnabled = false;
@@ -146,7 +145,9 @@ Psychic.GameState = {
             this.world.bringToTop(this.card);
             this.add.tween(this.card.scale).to({x: 1, y: 1}, 1000, "Linear", true);
             this.add.tween(this.card).to({x: this.card.x, y: 205}, 1000, "Linear", true);
+            //Start tipping the crystal ball back
             let rotateBack = this.add.tween(this.crystalBall[index]).to({rotation: 0}, 1000, "Linear", true);
+            //If the card was not found tip them all back
             if(!found)
             {
                 this.add.tween(this.crystalBall[1]).to({rotation: 0}, 1000, "Linear", true);
@@ -154,9 +155,11 @@ Psychic.GameState = {
             }
             rotateBack.onComplete.add(function()
             {                
+                //Start flipping the card
                 let firstFlip = this.add.tween(this.card.scale).to({x: -0}, 1000, "Linear", true); 
                 firstFlip.onComplete.add(function()
                 {
+                    //Complete the flip
                     this.card.loadTexture('card');
                     let lastTween = this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
                     lastTween.onComplete.add(function()
@@ -168,10 +171,12 @@ Psychic.GameState = {
                         alert.alpha = 0;
                         this.add.tween(alert.scale).to({x: 1, y: 1}, 1500, "Linear", true);
                         this.add.tween(alert).to({alpha: 1}, 1500, "Linear", true);
-                        
+                        //Pause for readability
                         this.time.events.add(Phaser.Timer.SECOND * 3, function()
                         {
+                            //Remove the alert
                             alert.destroy();
+                            //If there is another level load it, otherwise end the game
                             if(this.currentLevel < this.levels)
                             {
                                 this.currentLevel++;
@@ -181,9 +186,9 @@ Psychic.GameState = {
                                 this.crystalBall[1].destroy();
                                 this.crystalBall[2].destroy();
                             
-                                this.crystalBall[0] = this.add.sprite(0, 365, 'crystalBall');
-                                this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
-                                this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
+                                this.crystalBall[0]= this.add.sprite(this.data.CrystalBalls.x[0], this.data.CrystalBalls.y[0], 'crystalBall');
+                                this.crystalBall[1] = this.add.sprite(this.data.CrystalBalls.x[1], this.data.CrystalBalls.y[1], 'crystalBall');
+                                this.crystalBall[2] = this.add.sprite(this.data.CrystalBalls.x[2], this.data.CrystalBalls.y[2], 'crystalBall');
                             
                                 this.showCard();
                             }
