@@ -3,6 +3,8 @@ var Psychic = Psychic || {};
 Psychic.StoryState = {
     create: function ()
     {
+        Psychic.Audio = this.add.audio('gypsy');
+        Psychic.Audio.play('', 0, 1, true);
         //Main screen
         this.background = this.add.sprite(0, 0, 'main');
         this.start = this.add.button(720, 540, 'start', function()

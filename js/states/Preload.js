@@ -22,6 +22,8 @@ Psychic.PreloadState = {
         this.load.image('start', 'assets/images/start.png');
         this.load.image('coupon', 'assets/images/Psychic_coupon.jpg');
         
+        this.load.audio('gypsy', ['assets/audio/gypsy.mp3', 'assets/audio/gypsy.m4a', 'assets/audio/gypsy.ogg'])
+        
         this.load.text('psychicData', 'assets/data/psychicData.json');
         
         /*JSON
