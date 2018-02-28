@@ -3,6 +3,7 @@ var Psychic = Psychic || {};
 Psychic.EndState = {
     create: function()
     {
+        this.add.sprite(0, 0, 'end');
         this.add.sprite(105, 0, 'crystalBallFinal');
         this.coupon = this.add.sprite(this.world.centerX + 10, this.world.centerY + 20, 'coupon');
         this.coupon.scale.setTo(0.1, 0.1);

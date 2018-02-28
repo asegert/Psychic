@@ -48,7 +48,6 @@ Psychic.GameState = {
                     {
                         //Remove the card and begin mixing
                         this.card.destroy();
-                        this.clickable(num);
                         this.shuffle(0, 10, 1000, num);//min 300
                     }, this);
                 }, this);
@@ -68,6 +67,9 @@ Psychic.GameState = {
                 {
                     //Run the tween
                     console.log('You got the right ball');
+                    this.crystalBall[0].inputEnabled = false;
+                    this.crystalBall[1].inputEnabled = false;
+                    this.crystalBall[2].inputEnabled = false;
                     this.guessTween(true, i);
                 }, this);   
             }
@@ -79,6 +81,9 @@ Psychic.GameState = {
                 {
                     //Run the tween
                     console.log('You got the wrong ball');
+                    this.crystalBall[0].inputEnabled = false;
+                    this.crystalBall[1].inputEnabled = false;
+                    this.crystalBall[2].inputEnabled = false;
                     this.guessTween(false, 0);
                 }, this);
             }
@@ -108,18 +113,22 @@ Psychic.GameState = {
     },
     replaceCard: function(index)
     {
+        //Allow input from the cryatal balls
+        this.clickable(index);
         //Add the card under the correct crystal ball as it was before
         this.card = this.add.sprite(this.crystalBall[index].x + 100, 585, 'cardBack');
         this.card.scale.setTo(0.5, 0.1);
         this.card.anchor.setTo(0.5, 0.5);
-        this.world.bringToTop(this.crystalBall[index]);    
+        this.world.bringToTop(this.crystalBall[index]); 
     },
     guessTween: function(found, index)
     {
+        //Asset to be displayed
+        let tex = 'lose';
         //Tilt the crystal ball to reveal the card
         let tiltTween = this.add.tween(this.crystalBall[index]).to({rotation: -0.5}, 1000, "Linear", true);
         
-        //If the card was not found have the other two reveal as well, otherwise increase the wins
+        //If the card was not found have the other two reveal as well, otherwise increase the wins and change the display texture
         if(!found)
         {
             this.add.tween(this.crystalBall[1]).to({rotation: -0.5}, 1000, "Linear", true);
@@ -128,10 +137,11 @@ Psychic.GameState = {
         else
         {
             this.wins++;
+            tex = 'win';
         }
         
         tiltTween.onComplete.add(function()
-        {
+        {            
             //Bring the card back up to the top at the right size
             this.world.bringToTop(this.card);
             this.add.tween(this.card.scale).to({x: 1, y: 1}, 1000, "Linear", true);
@@ -143,7 +153,7 @@ Psychic.GameState = {
                 this.add.tween(this.crystalBall[2]).to({rotation: 0}, 1000, "Linear", true);
             }
             rotateBack.onComplete.add(function()
-            {
+            {                
                 let firstFlip = this.add.tween(this.card.scale).to({x: -0}, 1000, "Linear", true); 
                 firstFlip.onComplete.add(function()
                 {
@@ -151,25 +161,37 @@ Psychic.GameState = {
                     let lastTween = this.add.tween(this.card.scale).to({x: 1}, 1000, "Linear", true);
                     lastTween.onComplete.add(function()
                     {
-                        if(this.currentLevel < this.levels)
+                        //Show the win/loss text
+                        let alert = this.add.sprite(this.world.centerX, this.world.centerY, tex);
+                        alert.anchor.setTo(0.5, 0.5);
+                        alert.scale.setTo(0.1, 0.1);
+                        alert.alpha = 0;
+                        this.add.tween(alert.scale).to({x: 1, y: 1}, 1500, "Linear", true);
+                        this.add.tween(alert).to({alpha: 1}, 1500, "Linear", true);
+                        
+                        this.time.events.add(Phaser.Timer.SECOND * 3, function()
                         {
-                            this.currentLevel++;
+                            alert.destroy();
+                            if(this.currentLevel < this.levels)
+                            {
+                                this.currentLevel++;
                             
-                            this.card.destroy();
-                            this.crystalBall[0].destroy();
-                            this.crystalBall[1].destroy();
-                            this.crystalBall[2].destroy();
+                                this.card.destroy();
+                                this.crystalBall[0].destroy();
+                                this.crystalBall[1].destroy();
+                                this.crystalBall[2].destroy();
                             
-                            this.crystalBall[0] = this.add.sprite(0, 365, 'crystalBall');
-                            this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
-                            this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
+                                this.crystalBall[0] = this.add.sprite(0, 365, 'crystalBall');
+                                this.crystalBall[1] = this.add.sprite(350, 365, 'crystalBall');
+                                this.crystalBall[2] = this.add.sprite(700, 365, 'crystalBall');
                             
-                            this.showCard();
-                        }
-                        else
-                        {
-                            this.state.start('End');
-                        }
+                                this.showCard();
+                            }
+                            else
+                            {
+                                this.state.start('End');
+                            }
+                        }, this);
                     }, this);
                 }, this);
             }, this);
