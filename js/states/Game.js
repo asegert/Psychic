@@ -7,8 +7,6 @@ Psychic.GameState = {
         this.levels = 3;
         this.currentLevel = 1;
         this.wins = 0;
-        //temp
-        //this.add.text(0, 0, "Find the card and I will show you your future");
         //Holds the three crystal balls
         this.crystalBall = new Array();
         this.crystalBall[0]= this.add.sprite(0, 365, 'crystalBall');

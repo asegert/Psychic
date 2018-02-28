@@ -3,7 +3,21 @@ var Psychic = Psychic || {};
 Psychic.StoryState = {
     create: function ()
     {
-        this.game.state.start('Game');
+        //Main screen
+        this.background = this.add.sprite(0, 0, 'main');
+        this.start = this.add.button(720, 540, 'start', function()
+        {
+            //If the main screen is active load the instructions, otherwise go to the game
+            if(this.background.key === 'main')
+            {
+                this.background.loadTexture('instructions');
+            }
+            else
+            {
+                this.game.state.start('Game');
+            }
+        }, this);
+        this.start.scale.setTo(0.6, 0.6);
     }
 };
 /*Copyright (C) Wayside Co. - All Rights Reserved
